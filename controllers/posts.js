@@ -11,7 +11,7 @@ const PostController = {
     try {
       const { author, content, tags, image, likes, comments, privacy } =
         req.body;
-      if (author !== undefined && content !== undefined) {
+      if (author && content) {
         await Post.create({
           author,
           content,
@@ -37,7 +37,13 @@ const PostController = {
     try {
       const { id } = req.params;
       await Post.findByIdAndDelete(id)
-        .then(() => PostController.getPosts(req, res))
+        .then((result) => {
+          if(result){
+            PostController.getPosts(req, res);
+          } else {
+            errorHandler(res, 400, 4003);
+          }
+        })
         .catch(() => errorHandler(res, 400, 4003));
     } catch {
       errorHandler(res, 400, 4002);
@@ -48,7 +54,13 @@ const PostController = {
       const { body } = req;
       const { id } = req.params;
       await Post.findByIdAndUpdate(id, body)
-        .then(() => PostController.getPosts(req, res))
+        .then((result) => {
+          if(result){
+            PostController.getPosts(req, res);
+          } else {
+            errorHandler(res, 400, 4003);
+          }
+        })
         .catch(() => errorHandler(res, 400, 4003));
     } catch {
       errorHandler(res, 400, 4002);
